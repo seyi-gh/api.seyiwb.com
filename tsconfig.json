@@ -19,7 +19,6 @@
     "paths": {
       "@/*": ["src/*"]
     },
-
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,

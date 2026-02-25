@@ -1,6 +1,6 @@
-import config from '@/config';
+import config from '../config';
 import { Schema, model, Document } from 'mongoose';
-import { hashPassword, verifyPassword } from '@/services/auth.service';
+import { hashPassword, verifyPassword } from '../services/auth.service';
 
 //TODO Put more data for verification of emails, and paths for images, etc
 
@@ -45,11 +45,7 @@ const userSchema = new Schema<IUser>(
 userSchema.pre<IUser>('save', async function () {
   if (!this.isModified('passwordHash')) return;
 
-  try {
-    this.passwordHash = await hashPassword(this.passwordHash);
-  } catch (err: any) {
-    return;
-  }
+  this.passwordHash = await hashPassword(this.passwordHash);
 });
 
 //? -instance- compare password
@@ -59,12 +55,6 @@ userSchema.methods.comparePassword = async function (inputPassword: string): Pro
   } catch (err) {
     return false;
   }
-}
-
-
-if (!config.collections.users) { //!
-  console.error('There was not user collection name found');
-  process.exit(1);
 }
 
 export const Users = model<IUser>('Users', userSchema, config.collections.users);

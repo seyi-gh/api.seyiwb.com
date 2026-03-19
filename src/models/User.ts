@@ -8,6 +8,9 @@ export interface IUser extends Document {
   username: string;
   email: string;
   passwordHash: string;
+  isEmailVerified: boolean;
+  emailVerificationTokenHash?: string | null;
+  emailVerificationExpiresAt?: Date | null;
 
   createdAt: Date; //! auto-generated
   updatedAt: Date; //! auto-generated
@@ -33,6 +36,18 @@ const userSchema = new Schema<IUser>(
     passwordHash: {
       type: String,
       required: [true, 'password is required']
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false
+    },
+    emailVerificationTokenHash: {
+      type: String,
+      default: null
+    },
+    emailVerificationExpiresAt: {
+      type: Date,
+      default: null
     }
   },
   {

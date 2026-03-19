@@ -6,7 +6,11 @@ import { connectRateLimiterStore, disconnectRateLimiterStore } from './middlewar
 
 async function main() {
   await connnectDB();
-  await connectRateLimiterStore();
+  try {
+    await connectRateLimiterStore();
+  } catch (error: unknown) {
+    console.error('Rate limiter Redis unavailable, continuing with passOnStoreError -> ', error);
+  }
   
   const server = app.listen(config.port, () => {
     console.log(`Server is running in http://localhost:${config.port}`);

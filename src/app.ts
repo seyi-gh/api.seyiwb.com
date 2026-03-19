@@ -17,7 +17,7 @@ app.use('/auth', authRoutes);
 
 //? Handlers for blocked routes and general errors
 app.use((_req, res) => {
-  res.status(404).json({ message: 'Internal server error' });
+  res.status(404).json({ message: 'Route not found' });
 });
 
 app.use((

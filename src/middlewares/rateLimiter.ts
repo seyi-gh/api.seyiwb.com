@@ -6,6 +6,11 @@ import { rateLimit } from 'express-rate-limit';
 const redisClient = createClient({ url: config.redis_uri });
 let connectPromise: Promise<void> | null = null;
 
+// Prevent unhandled Redis errors from crashing the Node process.
+redisClient.on('error', (error: unknown) => {
+  console.error('Redis rate limiter client error -> ', error);
+});
+
 const ensureRedisConnected = async (): Promise<void> => {
   if (redisClient.isOpen) return;
 
@@ -39,6 +44,7 @@ export const globalLimiter = rateLimit({
   legacyHeaders: false,
   passOnStoreError: true,
   store: new RedisStore({
+    prefix: 'rl:global:',
     sendCommand: (...args: string[]) => sendRedisCommand(...args),
   }),
   message: 'IP Blocked (rate limit) -wait a moment-'
@@ -55,6 +61,7 @@ export const strictLimiter = rateLimit({
     message: 'IP Blocked -strict rate limit- wait a moment'
   },
   store: new RedisStore({
+    prefix: 'rl:strict:',
     sendCommand: (...args: string[]) => sendRedisCommand(...args),
   })
 });
